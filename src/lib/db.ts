@@ -1,11 +1,18 @@
-
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from '../../db/schema';
 
-if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
-}
 
-const client = postgres(process.env.DATABASE_URL);
-export const db = drizzle(client, { schema });
+// Validating DATABASE_URL usage
+const globalForDb = globalThis as unknown as {
+    conn: postgres.Sql | undefined;
+};
+
+const conn = globalForDb.conn ?? postgres(process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/postgres');
+if (process.env.NODE_ENV !== 'production') globalForDb.conn = conn;
+
+export const db = drizzle(conn, { schema });
+
+if (!process.env.DATABASE_URL) {
+    console.warn("⚠️  DATABASE_URL is not set. Database interactions will fail.");
+}
