@@ -1,0 +1,41 @@
+---
+interface Props {
+  title: string;
+  author: string;
+  price: number;
+  coverImage: string | null;
+  slug: string;
+  category?: string;
+}
+
+const { title, author, price, coverImage, slug, category } = Astro.props;
+const displayPrice = `$${(price / 100).toFixed(2)}`;
+const imgSrc = coverImage || `https://placehold.co/400x600/F9F5F1/1A1A2E?text=${encodeURIComponent(title)}`;
+---
+
+<a
+  href={`/books/${slug}`}
+  class="group flex flex-col gap-3 transition-all duration-300 ease-out hover:-translate-y-1"
+>
+  <div class="relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-muted shadow-sm transition-shadow duration-300 group-hover:shadow-xl">
+    <img
+      src={imgSrc}
+      alt={title}
+      class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      loading="lazy"
+      decoding="async"
+    />
+    {category && (
+      <span class="absolute top-2 left-2 rounded-full bg-background/90 px-2.5 py-0.5 text-xs font-medium text-foreground backdrop-blur-sm">
+        {category}
+      </span>
+    )}
+  </div>
+  <div class="flex flex-col gap-1">
+    <h3 class="font-serif text-base font-bold leading-tight text-foreground transition-colors group-hover:text-accent line-clamp-2 sm:text-lg">
+      {title}
+    </h3>
+    <p class="text-sm text-muted-foreground">{author}</p>
+    <p class="font-semibold text-foreground">{displayPrice}</p>
+  </div>
+</a>

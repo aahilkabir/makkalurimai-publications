@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BookCard from '../../components/BookCard.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import 'dotenv/config';
+import { getAuthors, getAuthorById } from '@makkalurimai/db';
+
+export async function getStaticPaths() {
+  const authors = await getAuthors();
+  return authors.map((a) => ({
+    params: { id: a.id.toString() },
+  }));
+}
+
+const { id } = Astro.params;
+const author = await getAuthorById(Number(id));
+if (!author) return Astro.redirect('/404');
+---
+
+<BaseLayout title={author.name} description={author.bio || `Books by ${author.name}`}>
+  <div class="container py-12">
+    <nav class="mb-8">
+      <a href="/authors" class="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group">
+        <span class="mr-2 transition-transform group-hover:-translate-x-1">←</span> All Authors
+      </a>
+    </nav>
+
+    <div class="mb-12 text-center max-w-2xl mx-auto">
+      <div class="mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-secondary text-3xl font-serif font-bold text-accent">
+        {author.name.charAt(0)}
+      </div>
+      <h1 class="font-serif text-4xl font-bold md:text-5xl">{author.name}</h1>
+      {author.bio && (
+        <p class="mt-4 text-lg text-muted-foreground leading-relaxed">{author.bio}</p>
+      )}
+    </div>
+
+    <SectionHeader title={`Books by ${author.name}`} subtitle={`${author.books.length} titles`} />
+    <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4">
+      {author.books.map((book) => (
+        <BookCard
+          title={book.title}
+          author={author.name}
+          price={book.price}
+          coverImage={book.coverImage}
+          slug={book.slug}
+          category={book.booksToCategories?.[0]?.category?.name}
+        />
+      ))}
+      {author.books.length === 0 && (
+        <p class="col-span-full py-8 text-center text-muted-foreground">
+          No books available for this author yet.
+        </p>
+      )}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,7 +1,7 @@
 
 import 'dotenv/config';
-import { db } from '../src/lib/db';
-import { authors, categories, books, booksToCategories } from '../db/schema';
+import 'dotenv/config';
+import { db, authors, categories, books, booksToCategories } from '../packages/db';
 
 async function seed() {
     console.log('🌱 Seeding database...');

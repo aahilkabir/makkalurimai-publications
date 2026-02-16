@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BookCard from '../../../components/BookCard.astro';
+import SectionHeader from '../../../components/SectionHeader.astro';
+import 'dotenv/config';
+import { getBooks, getCategories } from '@makkalurimai/db';
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return categories.map((cat) => ({
+    params: { category: cat.slug },
+    props: { categoryName: cat.name, categorySlug: cat.slug },
+  }));
+}
+
+const { categoryName, categorySlug } = Astro.props;
+const allBooks = await getBooks();
+const filteredBooks = allBooks.filter((book) =>
+  book.booksToCategories.some((btc) => btc.category.slug === categorySlug)
+);
+---
+
+<BaseLayout title={categoryName}>
+  <section class="container py-12">
+    <nav class="mb-6">
+      <a href="/books" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+        ← All Books
+      </a>
+    </nav>
+    <SectionHeader title={categoryName} subtitle={`${filteredBooks.length} titles`} />
+    <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {filteredBooks.map((book) => (
+        <BookCard
+          title={book.title}
+          author={book.author?.name || 'Unknown Author'}
+          price={book.price}
+          coverImage={book.coverImage}
+          slug={book.slug}
+          category={categoryName}
+        />
+      ))}
+    </div>
+    {filteredBooks.length === 0 && (
+      <p class="py-12 text-center text-muted-foreground">No books in this category yet.</p>
+    )}
+  </section>
+</BaseLayout>

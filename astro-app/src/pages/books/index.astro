@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BookCard from '../../components/BookCard.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import 'dotenv/config';
+import { getBooks } from '@makkalurimai/db';
+
+const allBooks = await getBooks();
+---
+
+<BaseLayout title="All Books">
+  <section class="container py-12">
+    <SectionHeader title="All Books" subtitle={`${allBooks.length} titles`} />
+    <div class="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      {allBooks.map((book) => (
+        <BookCard
+          title={book.title}
+          author={book.author?.name || 'Unknown Author'}
+          price={book.price}
+          coverImage={book.coverImage}
+          slug={book.slug}
+          category={book.booksToCategories?.[0]?.category?.name}
+        />
+      ))}
+    </div>
+    {allBooks.length === 0 && (
+      <p class="py-12 text-center text-muted-foreground">No books available yet.</p>
+    )}
+  </section>
+</BaseLayout>

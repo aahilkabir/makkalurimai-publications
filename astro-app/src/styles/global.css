@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* ─── Paper & Ink Design System ─── */
+@theme {
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-serif: 'Libre Baskerville', 'Georgia', serif;
+    --font-mono: 'Geist Mono', monospace;
+
+    /* Light Theme Palette */
+    --color-background: #F9F5F1;
+    --color-foreground: #1A1A2E;
+    --color-primary: #1A1A2E;
+    --color-primary-foreground: #F9F5F1;
+    --color-secondary: #EDEADE;
+    --color-secondary-foreground: #1A1A2E;
+    --color-muted: #E8E4DD;
+    --color-muted-foreground: #6B6B7B;
+    --color-accent: #C9A96E;
+    --color-accent-foreground: #1A1A2E;
+    --color-destructive: #B33A3A;
+    --color-border: #D4D0C8;
+    --color-card: #FFFFFF;
+    --color-card-foreground: #1A1A2E;
+}
+
+/* ─── Base styles ─── */
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-serif);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+/* ─── Utility classes ─── */
+.container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding-inline: 1.5rem;
+    }
+}
